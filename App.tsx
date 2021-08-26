@@ -152,33 +152,35 @@ class App extends React.Component {
     const { availableDays, allSelectedDays } = this.state;
 
     let saveData: any[] = [...allSelectedDays];
-    for (let i = 0; i < availableDays.length; i++) {
-      const ele = availableDays[i];
-      // only selected days
-      if (ele.selected) {
-        ele.timeSlots = [...ele.timeSlots].filter(
-          (f: any) => f.selected === true
-        ); // only selected time
-        const indx = saveData.findIndex((d) => d.id === ele.id);
-        if (indx === -1) {
-          saveData = [...saveData, ele];
-        } else if (indx > -1) {
-          saveData = [
-            ...saveData.slice(0, indx),
-            ele,
-            ...saveData.slice(indx + 1),
-          ];
+    if (availableDays.length) {
+      for (let i = 0; i < availableDays.length; i++) {
+        const ele = { ...availableDays[i] };
+        // only selected days
+        if (ele.selected) {
+          ele.timeSlots = [...ele.timeSlots].filter(
+            (f: any) => f.selected === true
+          ); // only selected time
+          const indx = saveData.findIndex((d) => d.id === ele.id);
+          if (indx === -1) {
+            saveData = [...saveData, ele];
+          } else if (indx > -1) {
+            saveData = [
+              ...saveData.slice(0, indx),
+              ele,
+              ...saveData.slice(indx + 1),
+            ];
+          }
         }
-      }
 
-      // on loop end
-      if (availableDays.length - 1 === i) {
-        this.setState({
-          availableTimeModal: false,
-          availableTimeSlots: [],
-          selectedDay: {},
-          allSelectedDays: [...saveData],
-        });
+        // on loop end
+        if (availableDays.length - 1 === i) {
+          this.setState({
+            availableTimeModal: false,
+            availableTimeSlots: [],
+            selectedDay: {},
+            allSelectedDays: [...saveData],
+          });
+        }
       }
     }
   };
@@ -242,7 +244,34 @@ class App extends React.Component {
         availableDays: [...temp],
       },
       () => {
-        this.onPressDoneBtn();
+        const { availableDays, allSelectedDays } = this.state;
+
+        let saveData: any[] = [...allSelectedDays];
+        if (availableDays.length) {
+          for (let i = 0; i < availableDays.length; i++) {
+            const ele = { ...availableDays[i] };
+            const indx = saveData.findIndex((d) => d.id === ele.id);
+            if (indx === -1) {
+              saveData = [...saveData, ele];
+            } else if (indx > -1) {
+              saveData = [
+                ...saveData.slice(0, indx),
+                ele,
+                ...saveData.slice(indx + 1),
+              ];
+            }
+
+            // on loop end
+            if (availableDays.length - 1 === i) {
+              this.setState({
+                availableTimeModal: false,
+                availableTimeSlots: [],
+                selectedDay: {},
+                allSelectedDays: [...saveData],
+              });
+            }
+          }
+        }
       }
     );
   };
