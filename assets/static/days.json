@@ -1,0 +1,65 @@
+[
+  {
+    "id": 0,
+    "name": "Weekdays",
+    "value": "Weekdays",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 1,
+    "name": "Weekends",
+    "value": "Weekends",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 2,
+    "name": "Monday",
+    "value": "Monday",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 3,
+    "name": "Tuesday",
+    "value": "Tuesday",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 4,
+    "name": "Wednesday",
+    "value": "Wednesday",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 5,
+    "name": "Thursday",
+    "value": "Thursday",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 6,
+    "name": "Friday",
+    "value": "Friday",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 7,
+    "name": "Saturday",
+    "value": "Saturday",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 8,
+    "name": "Sunday",
+    "value": "Sunday",
+    "selected": false,
+    "disabled": false
+  }
+]

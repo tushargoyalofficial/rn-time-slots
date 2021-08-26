@@ -1,0 +1,74 @@
+[
+  {
+    "id": 0,
+    "name": "Slot 1 - 08:00AM - 10:00AM",
+    "value": "Slot 1 - 08:00AM - 10:00AM",
+    "startTime": "8:00am",
+    "endTime": "10:00am",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 1,
+    "name": "Slot 2 - 10:00AM - 12:00PM",
+    "value": "Slot 2 - 10:00AM - 12:00PM",
+    "startTime": "10:00am",
+    "endTime": "12:00pm",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 2,
+    "name": "Slot 3 - 12:00PM - 02:00PM",
+    "value": "Slot 3 - 12:00PM - 02:00PM",
+    "startTime": "12:00pm",
+    "endTime": "2:00pm",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 3,
+    "name": "Slot 4 - 02:00PM - 04:00PM",
+    "value": "Slot 4 - 02:00PM - 04:00PM",
+    "startTime": "2:00pm",
+    "endTime": "4:00pm",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 4,
+    "name": "Slot 5 - 04:00PM - 06:00PM",
+    "value": "Slot 5 - 04:00PM - 06:00PM",
+    "startTime": "4:00pm",
+    "endTime": "6:00pm",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 5,
+    "name": "Slot 6 - 06:00PM - 08:00PM",
+    "value": "Slot 6 - 06:00PM - 08:00PM",
+    "startTime": "6:00pm",
+    "endTime": "8:00pm",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 6,
+    "name": "Slot 7 - 08:00PM - 10:00PM",
+    "value": "Slot 7 - 08:00PM - 10:00PM",
+    "startTime": "8:00pm",
+    "endTime": "10:00pm",
+    "selected": false,
+    "disabled": false
+  },
+  {
+    "id": 7,
+    "name": "Slot 8 - 10:00PM - 12:00AM",
+    "value": "Slot 8 - 10:00PM - 12:00AM",
+    "startTime": "10:00pm",
+    "endTime": "12:00am",
+    "selected": false,
+    "disabled": false
+  }
+]
