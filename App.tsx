@@ -1,6 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import moment from "moment";
 import days from "./assets/static/days.json";
 import timeSlots from "./assets/static/timeslots.json";
@@ -70,41 +78,11 @@ class App extends React.Component {
 
   // on selecting a day from modal
   onSelectADay = (day: any): void => {
-    let temp: any[] = [...this.state.availableDays];
-    temp[day.id].selected = true;
-
-    // Weekday selected
-    if (day.id === 0) {
-      temp.forEach((t) => {
-        if (t >= 2 && t <= 6) {
-          t.disabled = true; // mon-fri disabled
-        }
-      });
-    }
-
-    // weekend selected
-    if (day.id === 1) {
-      temp.forEach((t) => {
-        if (t >= 7 && t <= 8) {
-          t.disabled = true; // sat-sun disabled
-        }
-      });
-    }
-
-    // mon-fri selected
-    if (day.id >= 2 && day.id <= 6) {
-      temp[0].disabled = true; // make weekdays disabled
-    } // sat-sun selected
-    else if (day.id >= 7 && day.id <= 8) {
-      temp[1].disabled = true; // make weekend disabled
-    }
-
     this.setState(
       {
         availableDaysModal: false, // close day modal
-        selectedDay: { ...day },
-        availableDays: [...temp],
-        availableTimeSlots: [...day.timeSlots],
+        selectedDay: { ...day }, // set single day obj in state
+        availableTimeSlots: [...day.timeSlots], // set time slots for selected day to show in dropdown
       },
       () => {
         // for resolving ios modal open issue
@@ -120,7 +98,7 @@ class App extends React.Component {
     const timeSlotTemp: any[] = this.state.availableTimeSlots.map((t) => {
       let returnValue = { ...t };
       if (t.id === timeSlot.id) {
-        returnValue.selected = !returnValue.selected;
+        returnValue.selected = !returnValue.selected; // select/unselect time slot for a day
       }
       return returnValue;
     });
@@ -128,13 +106,43 @@ class App extends React.Component {
     let dayTemp: any[] = this.state.availableDays.map((d) => {
       let returnValue = { ...d };
       if (d.id === this.state.selectedDay.id) {
-        returnValue.timeSlots = [...timeSlotTemp];
+        returnValue.selected = true; // make day selected
+        returnValue.timeSlots = [...timeSlotTemp]; // set time slot with selection changes
       }
       return returnValue;
     });
 
+    let temp: any[] = [...dayTemp];
+    const day = this.state.selectedDay;
+
+    // Weekday selected
+    if (day.id === 0) {
+      temp.forEach((t) => {
+        if (t.id >= 2 && t.id <= 6) {
+          t.disabled = true; // mon-fri disabled
+        }
+      });
+    }
+
+    // weekend selected
+    if (day.id === 1) {
+      temp.forEach((t) => {
+        if (t.id >= 7 && t.id <= 8) {
+          t.disabled = true; // sat-sun disabled
+        }
+      });
+    }
+
+    // mon-fri selected
+    if (day.id >= 2 && day.id <= 6) {
+      temp[0].disabled = true; // make weekdays disabled
+    } // sat-sun selected
+    else if (day.id >= 7 && day.id <= 8) {
+      temp[1].disabled = true; // make weekend disabled
+    }
+
     this.setState({
-      availableDays: [...dayTemp],
+      availableDays: [...temp],
       availableTimeSlots: [...timeSlotTemp],
     });
   };
@@ -146,15 +154,21 @@ class App extends React.Component {
     let saveData: any[] = [...allSelectedDays];
     for (let i = 0; i < availableDays.length; i++) {
       const ele = availableDays[i];
-      const indx = saveData.findIndex((d) => d.id === ele.id);
-      if (indx === -1) {
-        saveData = [...saveData, ele];
-      } else if (indx > -1) {
-        saveData = [
-          ...saveData.slice(0, indx),
-          ele,
-          ...saveData.slice(indx + 1),
-        ];
+      // only selected days
+      if (ele.selected) {
+        ele.timeSlots = [...ele.timeSlots].filter(
+          (f: any) => f.selected === true
+        ); // only selected time
+        const indx = saveData.findIndex((d) => d.id === ele.id);
+        if (indx === -1) {
+          saveData = [...saveData, ele];
+        } else if (indx > -1) {
+          saveData = [
+            ...saveData.slice(0, indx),
+            ele,
+            ...saveData.slice(indx + 1),
+          ];
+        }
       }
 
       // on loop end
@@ -169,41 +183,176 @@ class App extends React.Component {
     }
   };
 
+  // remove particular day from ribbon
+  removeDay = (day: any) => {
+    let t: any[] = [...timeSlots];
+    t.forEach((ts) => {
+      ts.startTime = moment(ts.startTime, ["h:mm A"]);
+      ts.endTime = moment(ts.endTime, ["h:mm A"]);
+    });
+    let temp: any[] = [...this.state.availableDays];
+    temp[day.id].selected = false; // unselect day
+    temp[day.id].timeSlots = [...t]; // reset time slots for day
+
+    // Weekday enabled
+    if (day.id === 0) {
+      temp.forEach((t) => {
+        if (t.id >= 2 && t.id <= 6) {
+          t.disabled = false; // mon-fri enabled
+        }
+      });
+    }
+
+    // Weekend enabled
+    if (day.id === 1) {
+      temp.forEach((t) => {
+        if (t.id >= 7 && t.id <= 8) {
+          t.disabled = false; // sat-sun enabled
+        }
+      });
+    }
+
+    // mon-fri enabled
+    if (day.id >= 2 && day.id <= 6) {
+      const search = this.state.allSelectedDays.find(
+        (x) =>
+          (x.id === 2 && x.selected === true) ||
+          (x.id === 3 && x.selected === true) ||
+          (x.id === 4 && x.selected === true) ||
+          (x.id === 5 && x.selected === true) ||
+          (x.id === 6 && x.selected === true)
+      );
+      if (!search) {
+        temp[0].disabled = false; // make weekdays enabled
+      }
+    } // sat-sun enabled
+    else if (day.id >= 7 && day.id <= 8) {
+      const search = this.state.allSelectedDays.find(
+        (x) =>
+          (x.id === 7 && x.selected === true) ||
+          (x.id === 8 && x.selected === true)
+      );
+      if (!search) {
+        temp[1].disabled = false; // make weekend enabled
+      }
+    }
+
+    this.setState(
+      {
+        availableDays: [...temp],
+      },
+      () => {
+        this.onPressDoneBtn();
+      }
+    );
+  };
+
+  // remove particular time of day from ribbon
+  removeTime = (day: any, time: any) => {
+    const timeSlotTemp: any[] = day.timeSlots.map((t: any) => {
+      let returnValue = { ...t };
+      if (t.id === time.id) {
+        returnValue.selected = !returnValue.selected; // select/unselect time slot for day
+      }
+      return returnValue;
+    });
+
+    let dayTemp: any[] = this.state.availableDays.map((d) => {
+      let returnValue = { ...d };
+      if (d.id === day.id) {
+        returnValue.timeSlots = [...timeSlotTemp]; // set timeslot for day
+      }
+      return returnValue;
+    });
+
+    this.setState(
+      {
+        availableDays: [...dayTemp],
+        availableTimeSlots: [],
+        selectedDay: {},
+      },
+      () => {
+        this.onPressDoneBtn();
+      }
+    );
+  };
+
   render() {
     return (
-      <View style={styles.container}>
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={() => this.setState({ availableDaysModal: true })}
-        >
-          <Text style={styles.textStyle}>Show Days Modal</Text>
-        </Pressable>
-        <Text style={styles.title}>Grey Ribbon</Text>
-        {this.state.allSelectedDays &&
-          this.state.allSelectedDays.map(
-            (item) =>
-              item.selected && (
-                <View style={{ backgroundColor: "grey" }} key={item.id}>
-                  <View>
-                    <Text style={{ color: "white", fontSize: 18 }}>
-                      {item.name}
-                    </Text>
-                  </View>
-                  {item.timeSlots.length &&
-                    item.timeSlots.map(
-                      (itemTime: any) =>
-                        itemTime.selected && (
-                          <Text
-                            key={itemTime.id}
-                            style={{ color: "white", fontSize: 12 }}
-                          >
-                            {itemTime.name}
-                          </Text>
-                        )
-                    )}
-                </View>
-              )
-          )}
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => this.setState({ availableDaysModal: true })}
+          >
+            <Text style={styles.textStyle}>Show Days Modal</Text>
+          </Pressable>
+        </View>
+        <View style={{ flex: 4, alignItems: "center" }}>
+          <Text style={styles.title}>Grey Ribbon</Text>
+          <ScrollView
+            style={{ flex: 1, width: "80%" }}
+            contentContainerStyle={{ alignItems: "center" }}
+          >
+            {this.state.allSelectedDays &&
+              this.state.allSelectedDays.map(
+                (item) =>
+                  item.selected &&
+                  item.timeSlots.length && (
+                    <View
+                      style={{ backgroundColor: "grey", width: "80%" }}
+                      key={item.id}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-around",
+                          alignItems: "center",
+                          padding: 6,
+                        }}
+                      >
+                        <Text style={{ color: "white", fontSize: 18 }}>
+                          {item.name}
+                        </Text>
+                        <Button
+                          title={"X"}
+                          onPress={() => {
+                            this.removeDay(item);
+                          }}
+                        />
+                      </View>
+                      {item.timeSlots.length &&
+                        item.timeSlots.map(
+                          (itemTime: any) =>
+                            itemTime.selected && (
+                              <View
+                                key={itemTime.id}
+                                style={{
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  padding: 6,
+                                }}
+                              >
+                                <Text style={{ color: "white", fontSize: 12 }}>
+                                  {itemTime.name}
+                                </Text>
+                                <Button
+                                  title={"X"}
+                                  onPress={() => {
+                                    this.removeTime(item, itemTime);
+                                  }}
+                                  disabled={item.timeSlots.length === 1}
+                                />
+                              </View>
+                            )
+                        )}
+                    </View>
+                  )
+              )}
+          </ScrollView>
+        </View>
+
         <StatusBar style="auto" />
         <DaysModal
           availableDays={this.state.availableDays}
@@ -218,7 +367,7 @@ class App extends React.Component {
           onSelectATimeSlot={this.onSelectATimeSlot}
           onPressDoneBtn={this.onPressDoneBtn}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }
