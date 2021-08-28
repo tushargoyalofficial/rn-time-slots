@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   View,
 } from "react-native";
 import moment from "moment";
@@ -148,7 +149,19 @@ class App extends React.Component {
   };
 
   // on completing add time slots
-  onPressDoneBtn = (): void => {
+  onPressDoneBtn = (check: boolean): void => {
+    // Check if user selected any timeslot or not
+    if (check) {
+      const search = this.state.availableTimeSlots.find(
+        (x) => x.selected === true
+      );
+
+      if (search == undefined) {
+        ToastAndroid.show("Select at least one slot", 5000);
+        return;
+      }
+    }
+
     const { availableDays, allSelectedDays } = this.state;
 
     let saveData: any[] = [...allSelectedDays];
@@ -301,7 +314,7 @@ class App extends React.Component {
         selectedDay: {},
       },
       () => {
-        this.onPressDoneBtn();
+        this.onPressDoneBtn(false);
       }
     );
   };

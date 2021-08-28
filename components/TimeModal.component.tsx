@@ -14,7 +14,7 @@ interface IProps {
   availableTimeModal: boolean;
   toggleTimeModal: () => void;
   onSelectATimeSlot: (item: any) => void;
-  onPressDoneBtn: () => void;
+  onPressDoneBtn: (check: boolean) => void;
 }
 
 const TimeModal: React.FC<IProps> = (props: IProps) => {
@@ -36,7 +36,7 @@ const TimeModal: React.FC<IProps> = (props: IProps) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <ScrollView showsVerticalScrollIndicator={false}>
-          {availableTimeSlots.map((item: any) => (
+            {availableTimeSlots.map((item: any) => (
               <View key={item.id}>
                 <TouchableOpacity
                   style={{
@@ -59,7 +59,7 @@ const TimeModal: React.FC<IProps> = (props: IProps) => {
           </ScrollView>
           <Pressable
             style={[styles.button, styles.buttonClose]}
-            onPress={onPressDoneBtn}
+            onPress={() => onPressDoneBtn(true)}
           >
             <Text style={styles.textStyle}>Done</Text>
           </Pressable>
